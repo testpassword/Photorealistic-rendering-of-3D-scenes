@@ -19,7 +19,7 @@ for (lum_orig, lum_new) in [
     )
 
 # build observers
-scene.GetNode("floor shape node").shape.parts[0].surf_attrs.self_lum = 40  # set floor luminance by task 
+scene.GetNode("floor shape node").shape.parts[0].surf_attrs.self_lum = 45  # set floor luminance by task 
 for angle in [1, 10, 30, 60, 90]: 
     scene.AddNode(
         ObserverNode(
