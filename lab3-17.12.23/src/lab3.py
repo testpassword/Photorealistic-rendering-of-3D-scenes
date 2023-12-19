@@ -42,117 +42,127 @@ def unhide_node(node):
     node.SimUnhide()
     node.VisUnhide()
 
-#----------------------------------------------------------------------------------
-# render with spec refl
-# scene = OpenScene("./cornel_box0")
-# light_node = scene.GetNode("F000001")
-# light_node.light.name = "point_1"
-# light_node.light.kind = LightKind.LIGHT_POINT
-# sphs = [
-#     make_mirror_sphere_node(i, it) for i, it in 
-#     enumerate(
-#         [
-#             (190000, -164000, 235000), 
-#             (368000, -325000, 400000)
-#         ],
-#         start = 1
-#     )
-# ]
-# for it in sphs:
-#     front = get_front(it)
-#     front.kd = 0
-#     front.ks = 0.99
-#     front.kd_color = BWSurfColor(1)
-#     scene.AddNode(it)
-# LoadScene(scene)
-# no_bounding_sphere_scene_name = 'no_bounding_sphere'
-# params = apply_def_PT_params(scene, no_bounding_sphere_scene_name)
-# KERNEL.PTRender()
-# scene.Save(no_bounding_sphere_scene_name, OverwriteMode.OVERWRITE)
-# KERNEL.UnloadScene(True)
-# #----------------------------------------------------------------------------------
-# # sphere
-# sphere_node_3 = MeshNode(
-#     SphereClass(name = "sphere_3", radius = 70), 
-#     name = "sphere_3",
-#     tr = XYZTransform(
-#         pos = (278000, -279500, 548700)
-#     )
-# )
-# sph3_front = get_front(sphere_node_3)
-# sph3_front.kd = 0
-# sph3_front.ktd = 0.95
-# sph3_front.kd_color = BWSurfColor(1)
-# scene.AddNode(sphere_node_3)
-# LoadScene(scene)
-# for r in [0.07, 7, 70, 700, 7000]:
-#     r_s = str(r).replace('.', '_')
-#     scene_name = 'bounding_sphere_r' + r_s
-#     params.path = scene_name
-#     sphere_node_3.shape.radius = r * 1000
-#     KERNEL.PTRender()
-#     scene.Save(scene_name, OverwriteMode.OVERWRITE)
 
-# KERNEL.UnloadScene(True)
-# # #----------------------------------------------------------------------------------
-# # # rectangle 
-# scene = OpenScene('bounding_sphere_r7000')
-# light_node = scene.GetNode("F000001")
-# light_node.light.name = "rectangle_1"
-# light_node.light.kind = LightKind.LIGHT_RECTANGLE
-# hide_node(scene.GetNode("sphere_3"))
-# LoadScene(scene)
-# rectangle_original_scene_name = 'rectangle_original'
-# params = apply_def_PT_params(scene, rectangle_original_scene_name)
-# KERNEL.PTRender()
-# scene.Save(rectangle_original_scene_name, OverwriteMode.OVERWRITE)
-# KERNEL.UnloadScene(True)
-# # #----------------------------------------------------------------------------------
-# # # lambertian
-# light_node = scene.GetNode("F000001")
-# light_node.targ_dist = 548700
-# light_node.light.gonio = GONIO_LIB.GetItem('lambertian')
-# light_node.tr = Transform(azim = 90, tilt = 0, rot = 0)
-# light_node.Translate(278000, -279500, 548700)
-# LoadScene(scene)
-# rectangle_lambert_scene_name = 'rectangle_lambert'
-# params.path = rectangle_lambert_scene_name
-# KERNEL.PTRender()
-# scene.Save(rectangle_lambert_scene_name, OverwriteMode.OVERWRITE)
-# KERNEL.UnloadScene(True)
-# # #----------------------------------------------------------------------------------
-# # # spot
-# light_node.light.gonio = GONIO_LIB.GetItem('spot')
-# LoadScene(scene)
-# rectangle_spot_scene_name = 'rectangle_spot'
-# params.path = rectangle_spot_scene_name
-# KERNEL.PTRender()
-# scene.Save(rectangle_spot_scene_name, OverwriteMode.OVERWRITE)
-# KERNEL.UnloadScene(True)
-# #----------------------------------------------------------------------------------
-# # BDF sampling
-# scene = OpenScene(rectangle_spot_scene_name)
-# for it in ["brs_0", "brs_1", "brs_2", "F000001"]: hide_node(scene.GetNode(it))
-# for i in range(1, 3):
-#     front = get_front(scene.GetNode('sphere_' + str(i)))
-#     front.ks = 0
-#     front.gr_val = 0.95
-#     front.gr_ang = 10
-# dayLight = scene.DayLight()
-# dayLight.on = True
-# dayLight.SetNaturalMode()
-# dayLight.SetDirectMode(56.905, 340.17)
-# LoadScene(scene)
 
-# for it in [True, False]:
-#     BDF_scene_name = 'BDF_' + str(it)
-#     params = apply_def_PT_params(scene, BDF_scene_name)
-#     params.bdf_sampling = it
-#     KERNEL.PTRender()
-#     scene.Save(BDF_scene_name, OverwriteMode.OVERWRITE)
-# KERNEL.UnloadScene(True)
-# #----------------------------------------------------------------------------------
-# # updating cornel box with light optimization 
+# NO BOUNDING_SPHERE
+scene = OpenScene("./cornel_box0")
+light_node = scene.GetNode("F000001")
+light_node.light.name = "point_1"
+light_node.light.kind = LightKind.LIGHT_POINT
+sphs = [
+    make_mirror_sphere_node(i, it) for i, it in 
+    enumerate(
+        [
+            (190000, -164000, 235000), 
+            (368000, -325000, 400000)
+        ],
+        start = 1
+    )
+]
+for it in sphs:
+    front = get_front(it)
+    front.kd = 0
+    front.ks = 0.99
+    front.kd_color = BWSurfColor(1)
+    scene.AddNode(it)
+LoadScene(scene)
+no_bounding_sphere_scene_name = 'no_bounding_sphere'
+params = apply_def_PT_params(scene, no_bounding_sphere_scene_name)
+KERNEL.PTRender()
+scene.Save(no_bounding_sphere_scene_name, OverwriteMode.OVERWRITE)
+KERNEL.UnloadScene(True)
+
+
+# BOUNDING SPHERE
+sphere_node_3 = MeshNode(
+    SphereClass(
+        name = "sphere_3", 
+        radius = 70
+    ), 
+    name = "sphere_3",
+    tr = XYZTransform(
+        pos = (278000, -279500, 548700)
+    )
+)
+sph3_front = get_front(sphere_node_3)
+sph3_front.kd = 0
+sph3_front.ktd = 0.95
+sph3_front.kd_color = BWSurfColor(1)
+scene.AddNode(sphere_node_3)
+LoadScene(scene)
+for r in [0.07, 7, 70, 700, 7000]:
+    r_s = str(r).replace('.', '_')
+    scene_name = 'bounding_sphere_r' + r_s
+    params.path = scene_name
+    sphere_node_3.shape.radius = r * 1000
+    KERNEL.PTRender()
+    scene.Save(scene_name, OverwriteMode.OVERWRITE)
+
+KERNEL.UnloadScene(True)
+
+
+# RECTANGLE ORIGINAL
+scene = OpenScene('bounding_sphere_r7000')
+light_node = scene.GetNode("F000001")
+light_node.light.name = "rectangle_1"
+light_node.light.kind = LightKind.LIGHT_RECTANGLE
+hide_node(scene.GetNode("sphere_3"))
+LoadScene(scene)
+rectangle_original_scene_name = 'rectangle_original'
+params = apply_def_PT_params(scene, rectangle_original_scene_name)
+KERNEL.PTRender()
+scene.Save(rectangle_original_scene_name, OverwriteMode.OVERWRITE)
+KERNEL.UnloadScene(True)
+
+
+# RECTANGE LAMBERT
+light_node = scene.GetNode("F000001")
+light_node.targ_dist = 548700
+light_node.light.gonio = GONIO_LIB.GetItem('lambertian')
+light_node.tr = Transform(azim = 90, tilt = 0, rot = 0)
+light_node.Translate(278000, -279500, 548700)
+LoadScene(scene)
+rectangle_lambert_scene_name = 'rectangle_lambert'
+params.path = rectangle_lambert_scene_name
+KERNEL.PTRender()
+scene.Save(rectangle_lambert_scene_name, OverwriteMode.OVERWRITE)
+KERNEL.UnloadScene(True)
+
+
+# RECTANGLE SPOT
+light_node.light.gonio = GONIO_LIB.GetItem('spot')
+LoadScene(scene)
+rectangle_spot_scene_name = 'rectangle_spot'
+params.path = rectangle_spot_scene_name
+KERNEL.PTRender()
+scene.Save(rectangle_spot_scene_name, OverwriteMode.OVERWRITE)
+KERNEL.UnloadScene(True)
+
+
+# BDF [ON/OFF]
+scene = OpenScene(rectangle_spot_scene_name)
+for it in ["brs_0", "brs_1", "brs_2", "F000001"]: hide_node(scene.GetNode(it))
+for i in range(1, 3):
+    front = get_front(scene.GetNode('sphere_' + str(i)))
+    front.ks = 0
+    front.gr_val = 0.95
+    front.gr_ang = 10
+dayLight = scene.DayLight()
+dayLight.on = True
+dayLight.SetNaturalMode()
+dayLight.SetDirectMode(56.905, 340.17)
+LoadScene(scene)
+
+for it in [True, False]:
+    BDF_scene_name = 'BDF_' + str(it)
+    params = apply_def_PT_params(scene, BDF_scene_name)
+    params.bdf_sampling = it
+    KERNEL.PTRender()
+    scene.Save(BDF_scene_name, OverwriteMode.OVERWRITE)
+KERNEL.UnloadScene(True)
+
+
+# WINDOW (scene only, need to run off/windows/automatic manually)
 scene = OpenScene('BDF_False')
 dayLight = scene.DayLight()
 dayLight.kind = DayLightKind.SUN
@@ -176,7 +186,7 @@ camera = Camera(
         z_rot_ang = -162.74
     )
 )
-camera.Apply()
+scene.camera = camera
 window_node = MeshNode(
     RectangleClass(
         name = "window",
