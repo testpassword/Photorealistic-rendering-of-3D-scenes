@@ -1,0 +1,33 @@
+import csv
+import os
+
+
+def set_defaults(params: 'PTRenderParams') -> 'PTRenderParams':
+    params.time_limit = 60
+    params.store_lum = True
+    params.store_illum = False
+    params.vs_accumulation = PTVSAccumulation.VS_OUTSIDE
+    params.is_lum = True
+    params.show_lights = True
+    params.show_indirect = True
+    params.is_direct = True
+    params.quasi_specular = False
+    return params
+
+
+fields = ['path', 'image_quality', 'killed_path_num', 'overlength_path_num', 'backward_path_num', 'backward_hit_num', 'forward_path_num', 'forward_hit_num', 'phase', 'accuracy']
+scene_names = ['c-box', 'c-box2', 'room2', 'light_guides', 'car_interior', 'interior1']
+kernel = GetKernel()
+with open('stats.csv', 'w', newline='') as f:
+    wr = csv.writer(f, delimiter=' ')
+    wr.writerow(fields)
+    for sn in scene_names:
+        for q in [PTImageQuality.LOW_FREQUENCY_NOISE, PTImageQuality.HIGH_FREQUENCY_NOISE]:
+            scene = OpenScene(os.path.join('additional scenes', sn, sn + '.IOF'))
+            LoadScene(scene)
+            params = set_defaults(scene.PTRenderParams())
+            params.path = scene.name + '_' + str(q).replace('PTImageQuality.', '')
+            params.image_quality = q
+            kernel.PTRender()
+            wr.writerow([getattr(params, f) for f in fields])
+            kernel.UnloadScene(True)
