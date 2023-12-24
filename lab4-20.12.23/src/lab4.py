@@ -15,7 +15,7 @@ def set_defaults(params: 'PTRenderParams') -> 'PTRenderParams':
     return params
 
 
-fields = ['path', 'image_quality', 'killed_path_num', 'overlength_path_num', 'backward_path_num', 'backward_hit_num', 'forward_path_num', 'forward_hit_num', 'phase', 'accuracy']
+fields = ['path', 'image_quality', 'killed_path_num', 'overlength_path_num', 'backward_path_num', 'backward_hit_num', 'forward_path_num', 'forward_hit_num', 'phase', 'accuracy', 'time']
 scene_names = ['c-box', 'c-box2', 'room2', 'light_guides', 'car_interior', 'interior1']
 kernel = GetKernel()
 with open('stats.csv', 'w', newline='') as f:
@@ -29,5 +29,5 @@ with open('stats.csv', 'w', newline='') as f:
             params.path = scene.name + '_' + str(q).replace('PTImageQuality.', '')
             params.image_quality = q
             kernel.PTRender()
-            wr.writerow([getattr(params, f) for f in fields])
+            wr.writerow([(getattr(params, f) if f != 'accuracy' else getattr(params, f) * 100)  for f in fields])
             kernel.UnloadScene(True)
